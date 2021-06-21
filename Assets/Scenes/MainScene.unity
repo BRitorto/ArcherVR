@@ -5998,7 +5998,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sun: {fileID: 0}
   sunLight: {fileID: 0}
-  timeOfDay: 16
+  timeOfDay: 14
   secondsPerMinute: 60
   secondsPerHour: 0
   secondsPerDay: 0
