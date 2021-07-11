@@ -4,12 +4,13 @@ using System.Text;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class ShootBow : MonoBehaviour {
 
     [SerializeField] GameObject arrowPrefab = null; //base arrow prefab
     [SerializeField] GameObject bow = null; //the bow prefab
-    [SerializeField] int arrowsRemaining = 10; //how many arrows the player has
+    [SerializeField] GameObject button = null; //the button
     [SerializeField] int pullSpeed = 10; //the speed at which the arrow is drawn
 
     private GameObject arrow; //the created arrow (duplicate of the arrow prefab)
@@ -41,16 +42,18 @@ public class ShootBow : MonoBehaviour {
         originalPos = bow.transform.localPosition; //store the bow's original pos
         SpawnArrow(); //spawn an arrow once the game starts
         arrowsText = GameObject.Find("arrowsText").GetComponent<Text>();
-        arrowsText.text = "Arrows left: " + arrowsRemaining;
+        arrowsText.text = "Arrows left: " + 10;
         PlayerPrefs.SetString("Arrows", arrowsText.text);
-        PlayerPrefs.SetInt("ArrowsLeft", arrowsRemaining);
+        PlayerPrefs.SetInt("ArrowsLeft", 10);
+        button = GameObject.Find("/Canvas/Button");
+        button.SetActive(false);
     }
 
     //Once per frame, check to see if the player attempted to shoot an arrow 
     private void Update() {
         ShootArrow();
 
-        if (reset == true) {
+        if (reset == true && PlayerPrefs.GetInt("ArrowsLeft") > 0) {
             if (bow.transform.localRotation.eulerAngles.x <= originalRot.eulerAngles.x) reset = false;
             else StartCoroutine(ResetRotation());
         }
@@ -58,7 +61,7 @@ public class ShootBow : MonoBehaviour {
 
     //Spawn an arrow at the transform's position
     private void SpawnArrow() {
-        if(arrowsRemaining > 0) { //if the player still has arrows
+        if(PlayerPrefs.GetInt("ArrowsLeft") > 0) { //if the player still has arrows
 
             if (reset) { //If the bow is still resetting, then we'll just jump back to the starting animation
                 reset = false;
@@ -100,7 +103,7 @@ public class ShootBow : MonoBehaviour {
 
     //Check to see if the player wants to shoot an arrow
     private void ShootArrow() {
-        if (arrowsRemaining > 0) { //if they have arrows left          
+        if (PlayerPrefs.GetInt("ArrowsLeft") > 0) { //if they have arrows left          
 
             //get the meshrenderers for the bow and arrow, as we'll be altering two attributes that they have
             SkinnedMeshRenderer bowSkin = bow.transform.GetComponent<SkinnedMeshRenderer>();
@@ -140,10 +143,14 @@ public class ShootBow : MonoBehaviour {
                     arrow.transform.SetParent(null); //set the parent to null
                     arrow.transform.position = transform.position; //set the position to be the current position of the transform
 
-                    arrowsRemaining -= 1; //reduce the amount of arrows the player has by one
+                    if (PlayerPrefs.GetInt("ArrowsLeft") == 1) {
+                        bow = GameObject.Find("/Player/Main Camera/Bow");
+                        bow.SetActive(false);
+                        button.SetActive(true);
+                    }
 
-                    PlayerPrefs.SetInt("ArrowsLeft", arrowsRemaining);
-                    arrowsText.text = "Arrows left: " + arrowsRemaining;
+                    PlayerPrefs.SetInt("ArrowsLeft", PlayerPrefs.GetInt("ArrowsLeft") - 1);
+                    arrowsText.text = "Arrows left: " + PlayerPrefs.GetInt("ArrowsLeft");
                     PlayerPrefs.SetString("Arrows", arrowsText.text);
 
                     af.shootForce = af.shootForce * ((drawDistance / 100) + 0.05f); //calculate the force of the arrow based on the draw distance
