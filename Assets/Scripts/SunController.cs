@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Text;
+using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class SunController : MonoBehaviour
 {
@@ -19,6 +23,8 @@ public class SunController : MonoBehaviour
     public float secondsPerDay;
 
     public float timeMultiplier = 1;
+    [SerializeField] private Text scoreText;
+
 
     void Start()
     {
@@ -27,6 +33,12 @@ public class SunController : MonoBehaviour
 
         secondsPerHour = secondsPerMinute * 60;
         secondsPerDay = secondsPerHour * 24;
+
+        scoreText = GameObject.Find("scoreText").GetComponent<Text>();
+        scoreText.text = "Score: " + 0;
+        PlayerPrefs.SetString("Score", scoreText.text);
+        PlayerPrefs.SetInt("ScoreNumber", 0);
+
     }
 
     // Update is called once per frame

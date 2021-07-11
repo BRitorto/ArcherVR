@@ -1,5 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
+using System.Text;
+using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class ShootBow : MonoBehaviour {
 
@@ -30,10 +34,16 @@ public class ShootBow : MonoBehaviour {
     private Vector3 totalBowPosChanges = new Vector3(0, 0, 0);
     private Vector3 totalArrowPosChanges = new Vector3(0, 0, 0);
 
+    [SerializeField] private Text arrowsText;
+
     private void Start() {
         originalRot = bow.transform.localRotation; //store the bow's original rotatation
         originalPos = bow.transform.localPosition; //store the bow's original pos
         SpawnArrow(); //spawn an arrow once the game starts
+        arrowsText = GameObject.Find("arrowsText").GetComponent<Text>();
+        arrowsText.text = "Arrows left: " + arrowsRemaining;
+        PlayerPrefs.SetString("Arrows", arrowsText.text);
+        PlayerPrefs.SetInt("ArrowsLeft", arrowsRemaining);
     }
 
     //Once per frame, check to see if the player attempted to shoot an arrow 
@@ -131,6 +141,10 @@ public class ShootBow : MonoBehaviour {
                     arrow.transform.position = transform.position; //set the position to be the current position of the transform
 
                     arrowsRemaining -= 1; //reduce the amount of arrows the player has by one
+
+                    PlayerPrefs.SetInt("ArrowsLeft", arrowsRemaining);
+                    arrowsText.text = "Arrows left: " + arrowsRemaining;
+                    PlayerPrefs.SetString("Arrows", arrowsText.text);
 
                     af.shootForce = af.shootForce * ((drawDistance / 100) + 0.05f); //calculate the force of the arrow based on the draw distance
 
