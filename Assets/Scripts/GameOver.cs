@@ -7,8 +7,13 @@ using System.Text;
 
 public class GameOver : MonoBehaviour
 {
-	private GameObject bow = null; //the bow prefab
+    [SerializeField] GameObject bow = null; //the bow prefab
+    [SerializeField] GameObject arrowPrefab = null; //base arrow prefab
     private GameObject button = null; //the button
+    private GameObject arrow; //the created arrow (duplicate of the arrow prefab)
+    private TrailRenderer trail; //trail for the arrow
+    private Quaternion originalRot;
+    private Vector3 originalPos;
     private Text arrowsText;
     private Text scoreText;
 
@@ -24,6 +29,9 @@ public class GameOver : MonoBehaviour
         arrowsText = GameObject.Find("arrowsText").GetComponent<Text>();
         scoreText = GameObject.Find("scoreText").GetComponent<Text>();
 
+        originalRot = bow.transform.localRotation; //store the bow's original rotatation
+        originalPos = bow.transform.localPosition; //store the bow's original pos
+
         bow.SetActive(true);
         button.SetActive(false);
         PlayerPrefs.SetInt("ArrowsLeft", 10);
@@ -34,5 +42,17 @@ public class GameOver : MonoBehaviour
 
         PlayerPrefs.SetString("ScoreText", "Score: " + 0);
         PlayerPrefs.SetString("Arrows", "Arrows left: " + 10);
+
+        SpawnArrow();
     }
+
+     //Spawn an arrow at the transform's position
+    private void SpawnArrow() {
+        arrow = Instantiate(arrowPrefab, transform.position, transform.rotation) as GameObject; //create new arrow
+        arrow.transform.SetParent(transform, true); //set the arrow's parent
+        arrow.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+        trail = arrow.GetComponent<TrailRenderer>(); //get the new trail component
+    }
+    
+    
 }
