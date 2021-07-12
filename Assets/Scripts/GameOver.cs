@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Text;
 
 public class GameOver : MonoBehaviour
 {
-	[SerializeField] GameObject bow = null; //the bow prefab
-    [SerializeField] GameObject button = null; //the button
-    [SerializeField] private Text arrowsText;
+	private GameObject bow = null; //the bow prefab
+    private GameObject button = null; //the button
+    private Text arrowsText;
+    private Text scoreText;
 
     void Start()
     {
@@ -27,7 +29,8 @@ public class GameOver : MonoBehaviour
         PlayerPrefs.SetInt("ArrowsLeft", 10);
         PlayerPrefs.SetInt("Score", 0);
 
-        scoreText.Text = 
+        scoreText.text = "Score: 0";
+        arrowsText.text = "Arrows left: 10";
 
         PlayerPrefs.SetString("ScoreText", "Score: " + 0);
         PlayerPrefs.SetString("Arrows", "Arrows left: " + 10);
